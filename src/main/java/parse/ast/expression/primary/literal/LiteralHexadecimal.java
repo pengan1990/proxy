@@ -1,0 +1,67 @@
+/**
+ * (created at 2011-1-21)
+ */
+package parse.ast.expression.primary.literal;
+
+import parse.util.ParseString;
+import parse.visitor.SQLASTVisitor;
+
+import java.io.UnsupportedEncodingException;
+import java.util.Map;
+
+/**
+
+ */
+public class LiteralHexadecimal extends Literal {
+    private final String introducer;
+    private final String charset;
+    private final char[] string;
+    private final int offset;
+    private final int size;
+    private byte[] bytes;
+
+    /**
+     * @param introducer e.g. "_latin1"
+     * @param string     e.g. "select x'89df'"
+     * @param offset     e.g. 9
+     * @param size       e.g. 4
+     */
+    public LiteralHexadecimal(String introducer, char[] string, int offset, int size, String charset) {
+        super();
+        if (string == null || offset + size > string.length) throw new IllegalArgumentException("hex text is invalid");
+        if (charset == null) throw new IllegalArgumentException("charset is null");
+        this.introducer = introducer;
+        this.charset = charset;
+        this.string = string;
+        this.offset = offset;
+        this.size = size;
+    }
+
+    public String getText() {
+        return new String(string, offset, size);
+    }
+
+    public String getIntroducer() {
+        return introducer;
+    }
+
+    public void appendTo(StringBuilder sb) {
+        sb.append(string, offset, size);
+    }
+
+    @Override
+    public Object evaluationInternal(Map<? extends Object, ? extends Object> parameters) {
+        try {
+            this.bytes = ParseString.hexString2Bytes(string, offset, size);
+            return new String(bytes, introducer == null ? charset : introducer.substring(1));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("", e);
+        }
+    }
+
+    @Override
+    public void accept(SQLASTVisitor visitor) {
+        visitor.visit(this);
+    }
+
+}
