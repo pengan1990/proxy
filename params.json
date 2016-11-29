@@ -1,0 +1,6 @@
+{
+  "name": "Proxy",
+  "tagline": "middle ware to support MySQL data shard with pre-sharding",
+  "body": "# proxy\r\nusing nio ： all handle in one specified processor which include two loop thread without exit, one to read from epoll the other is to write data to channel\r\n\r\nproxy support \r\n* insert: complete insert\r\n* delete: all but should not using complex query which have to calculate across different schema\r\n* update: all but should not using complex query which have to calculate across different schema\r\n* select: support limit, order by, group by \r\n\r\nmeta data using: can design as the way you like",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
