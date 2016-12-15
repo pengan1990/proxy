@@ -16,6 +16,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -42,7 +43,7 @@ public abstract class AbstractConnection {
     private Lock lock;
     protected ByteBuffer readBuffer;
     protected ByteBuffer remainBuffer;
-    protected Queue<ByteBuffer> writeBufferQueue;
+    protected ConcurrentLinkedQueue<ByteBuffer> writeBufferQueue;
     protected SocketChannel client;
     protected SelectionKey clientKey;
     protected Processor processor;
@@ -51,7 +52,7 @@ public abstract class AbstractConnection {
 
     public AbstractConnection(SocketChannel client, Processor processor) throws IOException {
         this.processor = processor;
-        this.writeBufferQueue = new LinkedList<ByteBuffer>();
+        this.writeBufferQueue = new ConcurrentLinkedQueue<ByteBuffer>();
         this.client = client;
         this.lock = new ReentrantLock();
         setSocketOpts();
